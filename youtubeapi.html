@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <title>Document</title>
+    <style>
+      #videos{
+        display: grid;
+        grid-template-columns: repeat(4,18%);
+        gap: 8.5%;
+        margin-left: 243px;
+        margin-top: 100px;
+
+      }
+      #header{
+        position: fixed;
+        left: 250px;
+        width: 1100px;
+        height:65px;
+        background-color: white;
+        /* background-color: aqua; */
+        /* margin-left: 250px; */
+        /* border: 1px solid black; */
+      }
+      #navbar{
+        position: fixed;
+        width: 230px;
+        height: 650px;
+        /* border: 1px solid black; */
+        display: flex;
+        flex-direction: column;
+      }
+      #inline{
+        display: flex;
+      }
+      #logo{
+        width: 150px;
+      }
+      #logo1{
+        margin-left: 40px;
+        margin-top: 10px;
+      }
+      #query{
+        width: 500px;
+        height: 35px;
+      }
+      #inp{
+        margin-left: 100px;
+        margin-top: 10px;
+        display: flex;
+      }
+      #home{
+        margin-left: 50px;
+        display: grid;
+        grid-template-columns: 50px 100px;
+        
+      }
+      .material-icons{
+        margin-top: 15px;
+       
+      }
+      #search{
+        width: 60px;
+        height: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id = "inline">
+      <div id = "navbar">
+        <div id = "logo1">
+          <img id = "logo" src="https://www.freepnglogos.com/uploads/youtube-logo-png/new-youtube-logo-icon-update-youtube-issue-fortawesome-font-3.png" alt="">
+        </div>
+        <div>&nbsp;</div>
+        <div id = "home">
+          <i class="material-icons">home</i>
+          <h3>Home</h3>
+          
+        </div>
+        <div id = "home">
+          <i class="material-icons">explore</i>
+          <h3>Explore</h3>
+          
+        </div>
+        
+      </div>
+        
+      <div>
+        <!-- https://www.freepnglogos.com/uploads/youtube-logo-png/new-youtube-logo-icon-update-youtube-issue-fortawesome-font-3.png -->
+        <div id = "header"> 
+          <div id = "inp">
+            <input type="text" id="query" placeholder="Search for a Video" />
+            <button id = "search" onclick="searchVideos()"><i class="material-icons">search</i></button>
+            <div >
+              <i class="material-icons">mic</i>
+            </div>
+          </div>  
+        </div>
+      
+        <div id="videos"></div>
+      
+      </div>
+      
+    </div>
+    
+    
+
+    
+  </body>
+</html>
+
+<script>
+    //AIzaSyBZIT3D2tG-YN2cDSiJcfLO2Fdvdo9di1M
+
+    //https://youtube.googleapis.com/youtube/v3/search?q=csk&type=video&key=[YOUR_API_KEY]
+
+    let videos = document.getElementById("videos");
+    //https://youtube.googleapis.com/youtube/v3/videos?chart=mostPopular&maxResults=20&key=AIzaSyBZIT3D2tG-YN2cDSiJcfLO2Fdvdo9di1M
+
+    async function outer(){
+      let mes = await fetch(`https://youtube.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=20&key=AIzaSyBZIT3D2tG-YN2cDSiJcfLO2Fdvdo9di1M`)
+    //let mes = await fetch(`https://youtube.googleapis.com/youtube/v3/videos?chart=mostPopular&maxResults=20&key=AIzaSyBZIT3D2tG-YN2cDSiJcfLO2Fdvdo9di1M`)
+      let data = await mes.json();
+      //let da = await tes.json();
+      //console.log("da:", da);
+      console.log("data:", data.items);
+      append(data.items)
+    }
+    outer();
+    function append(video_data){
+// using destucturing and ES6 
+      //videos.innerHTML = null;
+      //console.log("data.items:", video_data[0].snippet.title)
+        video_data.forEach(({id, snippet}) => {
+            let mdiv = document.createElement('div');
+            let div1 = document.createElement('div');
+            let p = document.createElement('p');
+
+          div1.innerHTML = `<iframe width="260" height="165" src="https://www.youtube.com/embed/${id}"> title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+          // div1.style.marginTop = "10px"
+          p.textContent = snippet.title;
+          mdiv.style.marginTop = "-30px"
+          mdiv.append(div1,p)
+          videos.append(mdiv);
+
+        });
+    }
+    
+    
+
+    async function searchVideos(){
+        let query = document.getElementById('query').value;
+        let res = await fetch(`https://youtube.googleapis.com/youtube/v3/search?q=${query}&type=video&key=AIzaSyBZIT3D2tG-YN2cDSiJcfLO2Fdvdo9di1M&maxResults=20`)
+
+        let data = await res.json();
+        console.log("data:", data);
+
+        appendVideos(data.items);
+    }
+   
+
+    function appendVideos(video_data){
+// using destucturing and ES6 
+      videos.innerHTML = null;
+        video_data.forEach(({ id: { videoId } }) => {
+
+            let div = document.createElement('div');
+
+          div.innerHTML = `<iframe width="260" height="165" src="https://www.youtube.com/embed/${videoId}"> title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+          div.style.marginTop = "20px"
+          videos.append(div);
+
+        });
+    }
+
+</script>
